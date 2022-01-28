@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Home page
+{% endblock %}
+
+{% block body %}
+
+    <h1>Home</h1>
+    <a class="q-title" href="{{ path('app_show', { ma_wildcard: 'apprendre-le-front-flip'}) }}"><h2>Apprendre le front-flip</h2></a>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/{{ asset('css/style.css') }}">
+{% endblock %}

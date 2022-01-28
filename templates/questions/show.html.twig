@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Question
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <li><a href="{{ path('app_homepage') }}" class="nav-link px-2 text-secondary">Home</a></li>
+        <h1>{{ question }}</h1>
+
+
+
+
+        <a href="" class="btn btn-danger my-5">Delete...</a>
+        <p>{{ question_text|markdown }}</p>
+
+
+
+        <div>
+            <h3>Il y a {{ answers|length }} réponses</h3>
+            <ul>
+                {% for answer in answers %}
+                    <li>Paul : {{ answer}}</li>
+                    <div class="col float-end js-vote">
+                        <button class="badge bg-success js-vote-up" data-direction="up">Vote up</button>
+                        <button class="badge bg-danger js-vote-down" data-direction="down">Vote down</button>
+                        <span class="badge bg-secondary mx-3 js-vote-total">6</span>
+                    </div>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/question_show.js') }}"></script>
+{% endblock %}
