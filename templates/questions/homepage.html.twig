@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block body %}
-
+    {% if app.user %}
+        <li><a href="/logout">Logout</a></li>
+    {% else %}
+        <li><a href="/login">Login</a></li>
+    {% endif %}
     <h1>Home</h1>
     <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="{{ path('search_question') }}">
         <input type="search" class="form-control form-control-dark" placeholder="Search..." name="s" aria-label="Search" value="{{ app.request.query.get('s') | default('') }}">
