@@ -7,7 +7,20 @@
 {% block body %}
 
     <h1>Home</h1>
-    <a class="q-title" href="{{ path('app_show', { ma_wildcard: 'apprendre-le-front-flip'}) }}"><h2>Apprendre le front-flip</h2></a>
+    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="{{ path('search_question') }}">
+        <input type="search" class="form-control form-control-dark" placeholder="Search..." name="s" aria-label="Search" value="{{ app.request.query.get('s') | default('') }}">
+    </form>
+    {% for question in questions %}
+    <a class="q-title" href="{{ path('app_show', { slug: question.slug }) }}"><h2>{{ question.name }}</h2></a>
+
+    <div class="q-display p-3">
+        <i class="fa fa-quote-left mr-3"></i>
+        <p class="d-inline">
+            {{ question.question }}
+        </p>
+        <p>Francis, <cite title="Source Title">{{ question.askedAt|ago }}</cite></p>
+    </div>
+    {% endfor %}
 
 {% endblock %}
 

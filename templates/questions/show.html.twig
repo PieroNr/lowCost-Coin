@@ -8,14 +8,27 @@
 
     <div class="container">
         <li><a href="{{ path('app_homepage') }}" class="nav-link px-2 text-secondary">Home</a></li>
-        <h1>{{ question }}</h1>
+        <h1>{{ question.name }}</h1>
+
+        <figure>
+            <blockquote class="blockquote">
+                {{ question.question|markdown_cached }}
+                <figcaption class="blockquote-footer">
+                    Francis, <cite title="Source Title">{{ question.askedAt|ago }}</cite>
+                </figcaption>
+            </blockquote>
+        </figure>
+        <div class="col js-vote">
+            <form action="{{ path('app_question_vote', { slug: question.slug }) }}" method="post">
+                <button class="btn btn-success btn-sm" name="vote" value="up">Vote up</button>
+                <button class="btn btn-warning btn-sm" name="vote" value="down">Vote down</button>
+                <span class="badge rounded-pill bg-dark">{{ question.votes }}</span>
+            </form>
 
 
+        </div>
 
-
-        <a href="" class="btn btn-danger my-5">Delete...</a>
-        <p>{{ question_text|markdown_cached }}</p>
-
+        <a href="{{ path('app_question_delete', { id: question.id }) }}" class="btn btn-danger my-5">Delete...</a>
 
 
         <div>
@@ -23,11 +36,7 @@
             <ul>
                 {% for answer in answers %}
                     <li>Paul : {{ answer}}</li>
-                    <div class="col float-end js-vote">
-                        <button class="badge bg-success js-vote-up" data-direction="up">Vote up</button>
-                        <button class="badge bg-danger js-vote-down" data-direction="down">Vote down</button>
-                        <span class="badge bg-secondary mx-3 js-vote-total">6</span>
-                    </div>
+
                 {% endfor %}
             </ul>
 
@@ -37,8 +46,4 @@
 
 
 
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('js/question_show.js') }}"></script>
 {% endblock %}

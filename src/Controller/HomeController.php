@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\MarkdownBundle\MarkdownParserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -18,11 +21,14 @@ class HomeController extends AbstractController
      * @Route("/", name="app_homepage")
      * @return Response
      */
-    public function homepage(Environment $environment, MarkdownHelper $helper){
+    public function homepage(QuestionRepository $repository){
 
-        $twig = $environment->render('questions/homepage.html.twig', []);
-        dump($this->getParameter('cache_system'));
-        return new Response($twig);
+
+        $questions = $repository->findAllAskedOrderByNewest();
+
+        return $this->render('questions/homepage.html.twig', [
+            'questions' => $questions
+        ]);
     }
 
     /**
@@ -37,7 +43,8 @@ class HomeController extends AbstractController
 'Ma pizza finalement ne convient pas à mon intérieur, 
 est-il possible de la retourner au magasin ?
 EOF
-            );
+            )
+            ->setVotes(rand(-20,50));
 
         if (rand(1, 10) > 2){
             $question->setAskedAt(new \DateTime(sprintf('-%d days', rand(1, 100))));
@@ -53,27 +60,56 @@ EOF
     }
 
     /**
-     * @Route("/questions/{ma_wildcard}", name="app_show")
+     * @Route("/questions/{slug}", name="app_show")
      */
-    public function show($ma_wildcard, MarkdownHelper $helper){
+    public function show(Question $question){
+
 
         $answers = [
-            'Je ne suis pas spécialement magicien',
-            'Test1',
-            'test2'
+            'Je ne suis pas spécialement magicien moi !',
+            'As-tu essayé de fermer les fenêtres et de recommencer ?',
+            'Crame tout !'
         ];
 
-        $question_text="Bitch **bitch** bitch !";
-
-        $parsedQuestion = $helper->parse($question_text);
-
-
-
         return $this->render('questions/show.html.twig', [
-            'question' => sprintf('La question : %s', $ma_wildcard),
-            'answers' => $answers,
-            'question_text' => $question_text
+            'question' => $question,
+            'answers' => $answers
         ]);
+    }
+
+    /**
+     * @Route("/question/{slug}/vote", name="app_question_vote", methods={"POST"})
+     * @param Question $question
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return RedirectResponse
+     */
+    public function questionVote(Question $question, Request $request, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $vote = $request->request->get('vote');
+
+        if ($vote === "up") {
+            $question->upVote();
+        } else {
+            $question->downVote();
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_show', [
+            'slug' => $question->getSlug()
+        ]);
+    }
+
+    /**
+     * @Route("/questions/{id}/delete", name="app_question_delete")
+     */
+    public function questionDelete($id, EntityManagerInterface $entityManager){
+        $question = $entityManager->getReference(Question::class, $id);
+        $entityManager->remove($question);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_homepage');
     }
 
 
