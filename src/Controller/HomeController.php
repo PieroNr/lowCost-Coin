@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Question;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
@@ -36,20 +37,26 @@ class HomeController extends AbstractController
      */
     public function newQuestion(EntityManagerInterface $entityManager){
 
+        $answer = new Answer();
+        $answer->setContent('Une super réponse !')
+            ->setUsername('Francis')
+            ->setCreatedAt(new \DateTime());
+
         $question = new Question();
-        $question->setName('Comment rendre une pizza ?')
-            ->setSlug('comment-rendre-une-pizza' . rand(0, 1000))
-            ->setQuestion(<<<EOF
-'Ma pizza finalement ne convient pas à mon intérieur, 
-est-il possible de la retourner au magasin ?
-EOF
-            )
-            ->setVotes(rand(-20,50));
+        $question->setName('Bonne question ?')
+            ->setSlug('boon-question' . rand(0, 1000))
+            ->setQuestion('Je pose de super questions');
+
+
+
 
         if (rand(1, 10) > 2){
             $question->setAskedAt(new \DateTime(sprintf('-%d days', rand(1, 100))));
         }
 
+        $answer->setQuestion($question);
+
+        $entityManager->persist($answer);
         $entityManager->persist($question);
         $entityManager->flush();
 
