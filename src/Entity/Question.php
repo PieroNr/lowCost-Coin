@@ -16,13 +16,13 @@ class Question
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, unique: true)]
     private $slug;
 
     #[ORM\Column(type: 'text')]
     private $question;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $askedAt;
 
     public function getId(): ?int
