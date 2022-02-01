@@ -31,6 +31,10 @@ class Answer
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $sellerId;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +96,18 @@ class Answer
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getSellerId(): ?User
+    {
+        return $this->sellerId;
+    }
+
+    public function setSellerId(?User $sellerId): self
+    {
+        $this->sellerId = $sellerId;
 
         return $this;
     }

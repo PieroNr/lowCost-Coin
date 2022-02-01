@@ -33,6 +33,14 @@ class Question
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class)]
     private $answers;
 
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'questions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $productId;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $buyerId;
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
@@ -145,6 +153,30 @@ class Question
                 $answer->setQuestion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProductId(): ?Product
+    {
+        return $this->productId;
+    }
+
+    public function setProductId(?Product $productId): self
+    {
+        $this->productId = $productId;
+
+        return $this;
+    }
+
+    public function getBuyerId(): ?User
+    {
+        return $this->buyerId;
+    }
+
+    public function setBuyerId(?User $buyerId): self
+    {
+        $this->buyerId = $buyerId;
 
         return $this;
     }
