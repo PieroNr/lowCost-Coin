@@ -1,0 +1,13 @@
+<div class="card" style="width: 20%;">
+    <img class="card-img-top" src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg" alt="Card image cap">
+    <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text">{{ product.description }}</p>
+        <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
+            Voir le produit
+        </a>
+    </div>
+    <div class="card-footer">
+        <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
+    </div>
+</div>

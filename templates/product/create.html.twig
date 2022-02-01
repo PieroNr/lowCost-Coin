@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Product{% endblock %}
+
+{% block body %}
+    <div class="container center">
+        <h1>Créer un produit</h1>
+        {{ form_start(createProductForm, {'attr': {'class': 'row'}}) }}
+        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
+            {{ form_widget(createProductForm.name, {'attr': {'placeholder': 'Titre'}}) }}
+            <span class="error">{{ form_errors(createProductForm.name) }}</span>
+        </div>
+        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
+            {{ form_widget(createProductForm.price, {'attr': {'placeholder': 'Prix'}}) }}
+            <span class="error">{{ form_errors(createProductForm.price) }}</span>
+        </div>
+        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
+            {{ form_widget(createProductForm.description, {'attr': {'placeholder': 'Description'}}) }}
+            <span class="error">{{ form_errors(createProductForm.description) }}</span>
+        </div>
+        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
+            {{ form_widget(createProductForm.tags, {'attr': {'placeholder': 'Tags'}}) }}
+            <span class="error">{{ form_errors(createProductForm.tags) }}</span>
+        </div>
+        <div class="input-field col s12">
+            <input type="submit" name="" class="btn btn-primary" value="Enregistrer">
+        </div>
+        {{ form_end(createProductForm) }}
+    </div>
+{% endblock %}

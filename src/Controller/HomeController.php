@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Answer;
 use App\Entity\Question;
+use App\Repository\ProductRepository;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,13 +23,13 @@ class HomeController extends AbstractController
      * @Route("/", name="app_homepage")
      * @return Response
      */
-    public function homepage(QuestionRepository $repository){
+    public function homepage(ProductRepository $repository){
 
 
-        $questions = $repository->findAllAskedOrderByNewest();
+        $products = $repository->findAllProductOrderByDate();
 
-        return $this->render('questions/homepage.html.twig', [
-            'questions' => $questions
+        return $this->render('home/homepage.html.twig', [
+            'products' => $products
         ]);
     }
 

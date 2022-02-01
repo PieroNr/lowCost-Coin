@@ -6,8 +6,10 @@ use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class Product
 {
     #[ORM\Id]
@@ -18,18 +20,27 @@ class Product
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     */
     #[ORM\Column(type: 'string', length: 255)]
     private $slug;
 
     #[ORM\Column(type: 'float')]
     private $price;
 
+    /**
+     * @Gedmo\Timestampable(on="create")
+     */
     #[ORM\Column(type: 'datetime')]
     private $publishedAt;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private $status;
 
+    /**
+     * @Gedmo\Timestampable(on="update")
+     */
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updatedAt;
 
@@ -78,12 +89,6 @@ class Product
         return $this->slug;
     }
 
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
 
     public function getPrice(): ?float
     {
@@ -102,12 +107,6 @@ class Product
         return $this->publishedAt;
     }
 
-    public function setPublishedAt(\DateTimeInterface $publishedAt): self
-    {
-        $this->publishedAt = $publishedAt;
-
-        return $this;
-    }
 
     public function getStatus(): ?string
     {
@@ -124,13 +123,6 @@ class Product
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     public function getSellerId(): ?User
