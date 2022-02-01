@@ -21,8 +21,6 @@ class Answer
     #[ORM\Column(type: 'string', length: 255)]
     private $username;
 
-    #[ORM\Column(type: 'integer')]
-    private $votes = 0;
 
     #[ORM\ManyToOne(targetEntity: Question::class, inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]
@@ -64,17 +62,6 @@ class Answer
         return $this;
     }
 
-    public function getVotes(): ?int
-    {
-        return $this->votes;
-    }
-
-    public function setVotes(int $votes): self
-    {
-        $this->votes = $votes;
-
-        return $this;
-    }
 
     public function getQuestion(): ?Question
     {
