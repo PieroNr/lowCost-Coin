@@ -27,9 +27,20 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($form->get('images')->getData());
+
             $product->setSellerId($user);
+            foreach ($form->get('images')->getData() as $image){
+
+
+
+            }
+
             $entityManager->persist($product);
+            foreach ($form->get('images')->getData() as $image){
+
+                $image->setProductId($product);
+
+            }
             $entityManager->flush();
 
 

@@ -7,18 +7,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichFileType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ImagesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('imageFile', VichFileType::class, [
-                'required'      => false,
-                'allow_delete'  => true, // not mandatory, default is true
-                'download_link' => true, // not mandatory, default is true
+            ->add('imageFile', VichImageType::class, [
+                'required' => false,
+                'download_uri' => true,
+                'image_uri' => true,
             ]);
-        ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

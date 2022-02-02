@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class CreateProductFormType extends AbstractType
 {
@@ -17,6 +18,9 @@ class CreateProductFormType extends AbstractType
         $builder
             ->add('images', CollectionType::class, [
                 'entry_type' => ImagesType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype'     => true,
             ])
             ->add('name')
             ->add('price')

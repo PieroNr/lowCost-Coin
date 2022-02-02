@@ -51,7 +51,8 @@ class Product
     #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
-    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class)]
+
+    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist'])]
     private $images;
 
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products')]

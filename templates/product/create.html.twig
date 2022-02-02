@@ -5,10 +5,12 @@
 {% block body %}
     <div class="container center">
         <h1>Créer un produit</h1>
+        <form method="post" enctype="multipart/form-data">
         {{ form_start(createProductForm, {'attr': {'class': 'form-horizontal'}}) }}
 
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(createProductForm.images, {'attr': {'placeholder': 'Images'}}) }}
+        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">{#
+            {{ form_widget(createProductForm.images, {'attr': {'placeholder': 'Images'}}) }}#}
+            {{ form_row(createProductForm.images.vars.prototype) }}
             <span class="error">{{ form_errors(createProductForm.images) }}</span>
         </div>
         <div class="input-field col s12 m6 l6 offset-m3 offset-l3">

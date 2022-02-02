@@ -5,8 +5,13 @@ namespace App\Entity;
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
+/**
+ * @Vich\Uploadable
+ */
 class Image
 {
     #[ORM\Id]
@@ -15,14 +20,28 @@ class Image
     private $id;
 
     /**
-     * @Vich\UploadableField(mapping="photo_images", fileNameProperty="filePath")
+     * @Vich\UploadableField(mapping="product_images", fileNameProperty="filePath")
+     * @Assert\File(
+     *     maxSize="30000K",
+     *     mimeTypes = {
+     *          "image/png",
+     *          "image/jpeg",
+     *          "image/jpg",
+     *          "image/svg"
+     *      }
+     *
+     * )
      */
     private $imageFile;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $filePath;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
     private $productId;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $updatedAt;
 
     public function getId(): ?int
     {
@@ -61,11 +80,24 @@ class Image
         return $this->imageFile;
     }
 
-    /**
-     * @param File $imageFile
-     */
-    public function setImageFile($imageFile)
+
+    public function setImageFile(File $image = null)
     {
-        $this->imageFile = $imageFile;
+        $this->imageFile = $image;
+        if ($image) {
+            $this->updatedAt = new \DateTime('now');
+        }
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 }
