@@ -4,6 +4,8 @@ version = 1
 name = "javascript"
 environment = ["jquery"]
 enabled = true
+[analyzers.meta]
+  environment = ["jquery"]
 
 [[analyzers]]
 name = "docker"
