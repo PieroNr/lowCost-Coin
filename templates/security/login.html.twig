@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="container center">
-        <h1>Connexion</h1>
+
         <form method="post" class="row">
             {% if error %}
                 <div class="col s12 m6 l6 offset-m3 offset-l3">
@@ -17,14 +17,42 @@
                     Tu es actuellement connect&#xE9; en tant que {{ app.user.firstname }}, <a href="{{ path('app_logout') }}">D&#xE9;connecte-toi</a>
                 </div>
             {% endif %}
-            <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
+            {#<div class="input-field col s12 m6 l6 offset-m3 offset-l3">
                 <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="" required autofocus placeholder="Adresse email">
             </div>
             <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
                 <input type="password" name="password" id="inputPassword" class="form-control" required placeholder="Mot de passe">
             </div>
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">#}
+
+            <div class="container center">
+                <form method="post" class="row">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                                <div class="card border-0 shadow rounded-3 my-5">
+                                    <div class="card-body p-4 p-sm-5">
+                                        <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
+                                        <div class="form-floating mb-3">
+                                            <input type="email" value="" name="email" class="form-control" id="floatingInput" required="" autofocus="" placeholder="Adresse email">
+                                            <label for="floatingInput">Email address</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="password" name="password" id="inputPassword" class="form-control" required="" placeholder="Mot de passe">
+                                            <label for="floatingPassword">Password</label>
+                                        </div>
+                                        <div class="input-field col s12 text-center">
+                                            <input type="submit" class="btn btn-primary btn-center" value="Me connecter">
+                                        </div>
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
             {#
                 Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
@@ -37,9 +65,7 @@
                 </div>
             #}
 
-            <div class="input-field col s12">
-                <input type="submit" class="btn btn-primary" value="Me connecter">
-            </div>
+
         </form>
     </div>
 {% endblock %}
