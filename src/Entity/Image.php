@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 class Image
@@ -13,6 +14,10 @@ class Image
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    /**
+     * @Vich\UploadableField(mapping="photo_images", fileNameProperty="filePath")
+     */
+    private $imageFile;
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $filePath;
 
@@ -46,5 +51,21 @@ class Image
         $this->productId = $productId;
 
         return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param File $imageFile
+     */
+    public function setImageFile($imageFile)
+    {
+        $this->imageFile = $imageFile;
     }
 }
