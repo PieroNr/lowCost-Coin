@@ -88,9 +88,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
-    public function setRoles(string $role): self
+    public function setRoles(Array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }

@@ -61,10 +61,7 @@ class ProductController extends AbstractController
     {
 
         $images = $imageRepository->findAllByProductId($product);
-
-        if (!$product instanceof Product) {
-            throw new NotFoundHttpException('Product not found');
-        }
+        
 
         return $this->render('product/show.html.twig', [
             'product' => $product,
