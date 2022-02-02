@@ -55,7 +55,7 @@ class Product
     #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist'])]
     private $images;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products', cascade: ['persist'])]
     private $tags;
 
     #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Question::class, orphanRemoval: true)]

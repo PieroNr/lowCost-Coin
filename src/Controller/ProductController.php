@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\CreateProductFormType;
+use App\Repository\ImageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,16 +57,18 @@ class ProductController extends AbstractController
      * @Route("/product/{slug}", name="app_product_show", methods={"GET"})
      * @return Response
      */
-    public function show(Product $product): Response
+    public function show(Product $product, ImageRepository $imageRepository): Response
     {
 
-        dd($product);
+        $images = $imageRepository->findAllByProductId($product);
+
         if (!$product instanceof Product) {
             throw new NotFoundHttpException('Product not found');
         }
 
         return $this->render('product/show.html.twig', [
-            'product' => $product
+            'product' => $product,
+            'images' => $images
         ]);
     }
 

@@ -6,13 +6,24 @@
     <div class="container center">
         <h1>Créer un produit</h1>
         <form method="post" enctype="multipart/form-data">
+
         {{ form_start(createProductForm, {'attr': {'class': 'form-horizontal'}}) }}
 
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">{#
-            {{ form_widget(createProductForm.images, {'attr': {'placeholder': 'Images'}}) }}#}
-            {{ form_row(createProductForm.images.vars.prototype) }}
-            <span class="error">{{ form_errors(createProductForm.images) }}</span>
-        </div>
+            <ul id="product-images-fields-list"
+                data-prototype="{{ form_widget(createProductForm.images.vars.prototype)|e }}"
+                data-widget-tags="{{ '<li></li>'|e }}"
+                data-widget-counter="{{ form_widget(createProductForm.images)|length }}"
+            >
+                {% for productImageForm in createProductForm.images %}
+                    {{ form_widget(productImageForm) }}
+
+                {% endfor %}
+            </ul>
+
+            <button type="button"
+                    class="add-another-collection-widget"
+                    data-list-selector="#product-images-fields-list">Add another Product Image</button>
+
         <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
             {{ form_widget(createProductForm.name, {'attr': {'placeholder': 'Titre'}}) }}
             <span class="error">{{ form_errors(createProductForm.name) }}</span>
@@ -25,13 +36,22 @@
             {{ form_widget(createProductForm.description, {'attr': {'placeholder': 'Description'}}) }}
             <span class="error">{{ form_errors(createProductForm.description) }}</span>
         </div>
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(createProductForm.tags, {'attr': {'placeholder': 'Tags'}}) }}
-            <span class="error">{{ form_errors(createProductForm.tags) }}</span>
-        </div>
+            <ul class="tags" data-index="{{ createProductForm.tags|length > 0 ? createProductForm.tags|last.vars.name + 1 : 0 }}"
+                data-prototype="{{ form_widget(createProductForm.tags.vars.prototype)|e }}">
+                {% for tag in createProductForm.tags %}
+                    <li>{{ form_row(tag.libelle) }}</li>
+                {% endfor %}
+
+            </ul>
+            <button type="button" class="add_item_link" data-collection-holder-class="tags">Add a tag</button>
         <div class="input-field col s12">
             <input type="submit" name="" class="btn btn-primary" value="Enregistrer">
         </div>
         {{ form_end(createProductForm) }}
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/uploadMultipleImages.js') }}"></script>
+    <script src="{{ asset('js/addMultipleTags.js') }}"></script>
 {% endblock %}
