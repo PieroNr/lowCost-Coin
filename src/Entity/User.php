@@ -37,12 +37,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     private $password;
 
-    #[ORM\OneToMany(mappedBy: 'sellerId', targetEntity: Product::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'sellerId', targetEntity: Product::class, orphanRemoval: true, fetch: 'EAGER')]
     private $products;
+
+    #[ORM\OneToMany(mappedBy: 'userSender', targetEntity: Note::class, fetch: 'EAGER')]
+    private $givenNotes;
+
+    #[ORM\OneToMany(mappedBy: 'userReceiver', targetEntity: Note::class, fetch: 'EAGER')]
+    private $receivedNotes;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->givenNotes = new ArrayCollection();
+        $this->receivedNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -182,6 +190,101 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($product->getSellerId() === $this) {
                 $product->setSellerId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Note[]
+     */
+    public function getGivenNotes(): Collection
+    {
+        return $this->givenNotes;
+    }
+
+    public function addGivenNote(Note $givenNote): self
+    {
+        if (!$this->givenNotes->contains($givenNote)) {
+            $this->givenNotes[] = $givenNote;
+            $givenNote->setUserSender($this);
+        }
+
+        return $this;
+    }
+
+    public function sendUpNote(User $userReceiver): Note
+    {
+        $note = new Note();
+        $note->setUserSender($this)
+            ->setUserReceiver($userReceiver)
+            ->setNote(1);
+
+        return $note;
+    }
+
+    public function sendDownNote(User $userReceiver): Note
+    {
+        $note = new Note();
+        $note->setUserSender($this)
+            ->setUserReceiver($userReceiver)
+            ->setNote(0);
+
+        return $note;
+    }
+
+    public function getTotalNote(): ?int
+    {
+        $totalNote = 0;
+        $arrayNotes = $this->getReceivedNotes();
+        foreach ($arrayNotes as $note){
+            if ($note->getNote() == 1){
+                $totalNote++;
+            } else {
+                $totalNote--;
+            }
+        }
+
+        return $totalNote;
+    }
+
+    public function removeGivenNote(Note $givenNote): self
+    {
+        if ($this->givenNotes->removeElement($givenNote)) {
+            // set the owning side to null (unless already changed)
+            if ($givenNote->getUserSender() === $this) {
+                $givenNote->setUserSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Note[]
+     */
+    public function getReceivedNotes(): Collection
+    {
+        return $this->receivedNotes;
+    }
+
+    public function addReceivedNote(Note $receivedNote): self
+    {
+        if (!$this->receivedNotes->contains($receivedNote)) {
+            $this->receivedNotes[] = $receivedNote;
+            $receivedNote->setUserReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedNote(Note $receivedNote): self
+    {
+        if ($this->receivedNotes->removeElement($receivedNote)) {
+            // set the owning side to null (unless already changed)
+            if ($receivedNote->getUserReceiver() === $this) {
+                $receivedNote->setUserReceiver(null);
             }
         }
 

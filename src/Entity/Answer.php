@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AnswerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Exception\InvalidArgumentException;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: AnswerRepository::class)]
 class Answer
@@ -26,6 +27,9 @@ class Answer
     #[ORM\JoinColumn(nullable: false)]
     private $question;
 
+    /**
+     * @Gedmo\Timestampable(on="create")
+     */
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
 

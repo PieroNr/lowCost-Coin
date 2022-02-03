@@ -3,17 +3,20 @@
 namespace App\Controller;
 
 use App\Data\SearchData;
+use App\Entity\Note;
 use App\Entity\Product;
 use App\Entity\Question;
 use App\Form\CreateProductFormType;
 use App\Form\QuestionFormType;
 use App\Form\SearchForm;
 use App\Repository\ImageRepository;
+use App\Repository\NoteRepository;
 use App\Repository\ProductRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,6 +80,11 @@ class ProductController extends AbstractController
 
             $entityManager->flush();
 
+            $this->AddFlash(
+                'succes',
+                "Le produit a bien été enregistré  !"
+            );
+
 
             return $this->redirectToRoute('app_homepage');
         }
@@ -92,7 +100,9 @@ class ProductController extends AbstractController
      */
     public function show(Product $product, ImageRepository $imageRepository, TagRepository $tagRepository, Request $request, UserInterface $user, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
     {
-        dd($product);
+
+        $seller = $product->getSellerId();
+
         $images = $imageRepository->findAllByProductId($product);
         $tags = $tagRepository->findAllByProductId($product);
         $questions = $questionRepository->findBy(
@@ -105,19 +115,17 @@ class ProductController extends AbstractController
         $form = $this->createForm(QuestionFormType::class, $question);
         $form->handleRequest($request);
 
-        $userId = $user->getId();
 
 
 
-        if ($form->isSubmitted() && $form->isValid() && $userId!=$product->getSellerId()->getId()) {
+
+        if ($form->isSubmitted() && $form->isValid() && $user!=$seller) {
 
             $question->setProductId($product);
             $question->setBuyerId($user);
 
             $entityManager->persist($question);
             $entityManager->flush();
-
-
 
         }
 
@@ -127,7 +135,50 @@ class ProductController extends AbstractController
             'images' => $images,
             'tags' => $tags,
             'questions' => $questions,
+            'noteTotale' => $seller->getTotalNote(),
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/product/{slug}/vote", name="app_product_vote", methods={"POST"})
+     */
+    public function questionVote(Product $product, Request $request, EntityManagerInterface $entityManager, UserInterface $user, NoteRepository $noteRepository): RedirectResponse
+    {
+
+
+
+
+        if ($user){
+            $findNote = $noteRepository->findBy(['userSender' => $user, 'userReceiver' => $product->getSellerId()]);
+
+            $vote = $request->request->get('vote');
+            if (!empty($findNote)){
+                $note = $findNote[0];
+                if ($vote === "up") {
+                    $note->setNote(1);
+                } elseif ($vote === "down") {
+                    $note->setNote(0);;
+                }
+
+            } else {
+                $note = new Note();
+                if ($vote === "up") {
+                    $note = $user->sendUpNote($product->getSellerId());
+                } elseif ($vote === "down") {
+                    $note = $user->sendDownNote($product->getSellerId());;
+                }
+                $entityManager->persist($note);
+            }
+
+            $entityManager->flush();
+        } else {
+            return $this->redirectToRoute('app_login');
+        }
+
+
+        return $this->redirectToRoute('app_product_show', [
+            'slug' => $product->getSlug()
         ]);
     }
 

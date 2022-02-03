@@ -37,10 +37,10 @@ class Question
     #[ORM\Column(type: 'integer')]
     private $votes = 0;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class, fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class, cascade: ['persist'], fetch: 'EAGER')]
     private $answers;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'questions', cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'questions')]
     #[ORM\JoinColumn(nullable: false)]
     private $productId;
 

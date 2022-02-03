@@ -11,6 +11,16 @@
 
 
         <div class="card-body">
+            <div class="col js-vote">
+                {% if app.user and app.user.id != product.sellerId.id %}
+                    <form class="form-vote" action="{{ path('app_product_vote', { slug: product.slug }) }}" method="post">
+                        <button class="btn btn-success btn-sm js-vote" name="vote" value="up">&#128077;</button>
+                        <button class="btn btn-danger btn-sm js-vote" name="vote" value="down">&#128078;</button>
+                        <span class="badge rounded-pill bg-dark">{{ noteTotale }}</span>
+
+                    </form>
+                {% endif %}
+            </div>
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
             <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
@@ -26,7 +36,7 @@
         <div class="card-footer">
             <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
         </div>
-        {% if app.user.id != product.sellerId.id %}
+        {% if app.user and app.user.id != product.sellerId.id %}
 
             {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
             <h5>Posez votre question</h5>
@@ -45,6 +55,22 @@
         <h5>{{ question.name }}</h5>
         <strong>{{ question.question }}</strong>
         <small class="text-muted">posée le : {{ question.askedAt|date }}</small>
+        <h6>Réponses</h6>
+            {% for answer in question.answers %}
+                <p>{{ answer.username }} : <b>{{ answer.content }}</b></p>
+                <small class="text-muted">{{ answer.createdAt|date }}</small>
+            {% endfor %}
+            {% if app.user.id == product.sellerId.id %}
+                <form action="{{ path('app_answer', { slug: question.slug }) }}" method="post">
+                    <input type="text" name="answer" class="input-text" placeholder="Réponse">
+                    <button class="btn btn-primary btn-sm" name="send">Répondre</button>
+                </form>
+            {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/vote_user.js') }}"></script>
+{% endblock %}
+
