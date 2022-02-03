@@ -10,6 +10,9 @@
     {% else %}
         <li><a href="/login">Login</a></li>
     {% endif %}
+    {% if app.user %}
+        <li><a href="{{ path('app_profil', { id: app.user.id }) }}">profil</a></li>
+    {% endif %}
     <h1>Home</h1>
 
     <a href="{{ path('app_product_create') }}" class="btn btn-primary">

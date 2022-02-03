@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,21 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("user/new", name="user")
+     * @Route("user/{id}", name="app_profil")
      */
-    public function newUser(EntityManagerInterface $entityManager): Response
+    public function showProfil(User $user): Response
     {
-        $user = new User();
-        $user->setFirstname('Francis')
-            ->setLastname('Huster')
-            ->setEmail('francishuster' . rand(1, 1000) . '@gamil.com');
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return new Response(sprintf('Un nouvel user avec l\'id #%d et le mail %s à été crée',
-            $user->getId(),
-            $user->getEmail()
-        ));
+        return $this->render('profil/profil.html.twig', [
+            'user' => $user
+        ]);
     }
 }
