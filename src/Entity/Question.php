@@ -6,6 +6,7 @@ use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -18,22 +19,28 @@ class Question
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     */
     #[ORM\Column(type: 'string', length: 100, unique: true)]
     private $slug;
 
     #[ORM\Column(type: 'text')]
     private $question;
 
+    /**
+     * @Gedmo\Timestampable(on="create")
+     */
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $askedAt;
 
     #[ORM\Column(type: 'integer')]
     private $votes = 0;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class)]
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: Answer::class, fetch: 'EAGER')]
     private $answers;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'questions')]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'questions', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private $productId;
 

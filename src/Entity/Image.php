@@ -37,7 +37,7 @@ class Image
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $filePath;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images', cascade: ['persist'])]
     private $productId;
 
     #[ORM\Column(type: 'datetime', nullable: true)]

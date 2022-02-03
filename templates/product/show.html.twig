@@ -9,16 +9,42 @@
             <img src="{{ vich_uploader_asset(image, 'imageFile') }}">
         {% endfor %}
 
-        <img class="card-img-top" src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg" alt="Card image cap">
+
         <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
             <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
                 Voir le produit
             </a>
+            <small class="text-muted">{{ product.price|number_format(2) }}€</small>
+            <div>
+            {% for tag in tags %}
+                <span class="badge rounded-pill bg-dark">{{ tag.libelle }}</span>
+            {% endfor %}
+            </div>
         </div>
         <div class="card-footer">
             <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
         </div>
+        {% if app.user.id != product.sellerId.id %}
+
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+            <h5>Posez votre question</h5>
+            <p>Titre</p>
+            {{ form_row(form.name) }}
+            <p>Contenu</p>
+            {{ form_row(form.question) }}
+            <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+            {{ form_end(form) }}
+
+        {% endif %}
+
+    </div>
+    <div class="container">
+        {% for question in questions %}
+        <h5>{{ question.name }}</h5>
+        <strong>{{ question.question }}</strong>
+        <small class="text-muted">posée le : {{ question.askedAt|date }}</small>
+        {% endfor %}
     </div>
 {% endblock %}

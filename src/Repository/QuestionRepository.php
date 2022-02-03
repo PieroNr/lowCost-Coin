@@ -35,20 +35,6 @@ class QuestionRepository extends ServiceEntityRepository
         ;
     }
 
-    /**
-     * @param $value
-     * @return int|mixed|string
-     */
-
-    public function searchByName($value)
-    {
-        return $this->createQueryBuilder('q')
-            ->andWhere('q.name LIKE :val OR q.slug LIKE :val')
-            ->setParameter('val', '%' . $value . '%')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
 
 
     /*

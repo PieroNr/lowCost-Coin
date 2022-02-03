@@ -12,6 +12,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\HasLifecycleCallbacks()]
 class Product
 {
+
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -52,13 +54,14 @@ class Product
     private $description;
 
 
-    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist'])]
+    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist'], fetch: 'EAGER')]
     private $images;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products', cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\JoinColumn(name: 'tag_product')]
     private $tags;
 
-    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Question::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Question::class, orphanRemoval: true, fetch: 'EAGER')]
     private $questions;
 
     public function __construct()

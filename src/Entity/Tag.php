@@ -18,7 +18,7 @@ class Tag
     #[ORM\Column(type: 'string', length: 100)]
     private $libelle;
 
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'tags', cascade: ['persist'])]
     private $products;
 
     public function __construct()
@@ -65,5 +65,10 @@ class Tag
         $this->products->removeElement($product);
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->libelle;
     }
 }

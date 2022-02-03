@@ -36,6 +36,17 @@ class TagRepository extends ServiceEntityRepository
     }
     */
 
+    public function findAllByProductId($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->addSelect()
+            ->innerJoin('t.products', 'p')
+            ->where('p.id = :product_id')
+            ->setParameter('product_id', $value)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     public function findOneByLibelle($value): ?Tag
     {

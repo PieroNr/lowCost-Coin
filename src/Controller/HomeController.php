@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Answer;
 use App\Entity\Question;
+use App\Repository\ImageRepository;
 use App\Repository\ProductRepository;
 use App\Repository\QuestionRepository;
 use App\Service\MarkdownHelper;
@@ -19,19 +20,7 @@ use Twig\Environment;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_homepage")
-     * @return Response
-     */
-    public function homepage(ProductRepository $repository){
 
-
-        $products = $repository->findAllProductOrderByDate();
-
-        return $this->render('home/homepage.html.twig', [
-            'products' => $products
-        ]);
-    }
 
     /**
      * @Route("/questions/new")
