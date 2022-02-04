@@ -75,11 +75,11 @@
                         <h6 style="font-weight: lighter; font-style: italic; margin-top: 2%">Pas de réponse</h6>
                     {% endif %}
                     {% for answer in question.answers %}
-                        <p class="mb-0 mt-3">{{ answer.username }} : <b>{{ answer.content }}</b></p>
+                        <p class="mb-0 mt-3">{{ answer.sellerId.firstname }} : <b>{{ answer.content }}</b></p>
                         <small class="text-muted">{{ answer.createdAt|date }}</small>
                     {% endfor %}
 
-                    {% if app.user.id == product.sellerId.id %}
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == product.sellerId.id %}
                         <form class="mt-2" action="{{ path('app_answer', { slug: question.slug }) }}" method="post" >
                             <textarea name="answer" class="input-text" placeholder="Réponse" style="width: 100%"></textarea>
                             <button class="btn btn-primary btn-sm" name="send">Répondre</button>

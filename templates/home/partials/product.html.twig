@@ -1,13 +1,16 @@
 
     <div class="d-flex flex-wrap">
         <div class="card" style="width: 18rem; margin: 10px">
-            <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+            {% if product.images.first %}
+                <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ product.name }}</h5>
                 <p class="card-text">{{ product.description }}</p>
                 <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
                     Voir le produit
                 </a>
+                <small class="text-muted">{{ product.price|number_format(2) }}€</small>
             </div>
             <div class="card-footer">
                 <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>

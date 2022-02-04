@@ -191,6 +191,8 @@ class Product
         return $this->tags;
     }
 
+
+
     public function addTag(Tag $tag): self
     {
         if (!$this->tags->contains($tag)) {

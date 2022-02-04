@@ -39,10 +39,8 @@ final class QuestionFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
-            'name' => self::faker()->text(),
-            'slug' => self::faker()->text(),
-            'question' => self::faker()->text(),
-            'votes' => self::faker()->randomNumber(),
+            'name' => self::faker()->text(30),
+            'question' => self::faker()->text(100),
         ];
     }
 

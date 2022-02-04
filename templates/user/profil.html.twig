@@ -98,7 +98,9 @@
                 {% for product in user.products %}
                     <div class="d-flex flex-wrap">
                         <div class="card" style="width: 18rem; margin: 10px">
-                            <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+                            {% if product.images.first %}
+                                <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+                            {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ product.name }}</h5>
                                 <p class="card-text">{{ product.description }}</p>
