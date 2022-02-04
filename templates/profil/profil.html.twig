@@ -11,6 +11,18 @@
                                 <div class="mt-3">
                                     <h4>{{ user.firstname }} {{ user.lastname }}</h4>
                                 </div>
+                                <div class="col js-vote">
+                                    {% if app.user and app.user.id != user.id %}
+                                        <form class="form-vote" action="{{ path('app_user_vote', { id: user.id }) }}" method="post">
+                                            <button class="btn btn-success btn-sm js-vote" name="vote" value="up">&#128077;</button>
+                                            <button class="btn btn-danger btn-sm js-vote" name="vote" value="down">&#128078;</button>
+                                            <span class="badge rounded-pill bg-dark">{{ noteTotale }} Like(s)</span>
+
+                                        </form>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-dark">{{ noteTotale }} Like(s)</span>
+                                    {% endif %}
+                                </div>
                             </div>
 
                         </div>
@@ -20,13 +32,23 @@
                     <div class="card">
                         <div class="card-body">
                             {% if app.user and app.user.id == user.id %}
+                                {{ form_start(registrationForm) }}
+                                <div class="row mb-3">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="form-floating col-sm-9 text-secondary">
+                                        {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Adresse email', 'class': 'form-control ml-3'}}) }}
+                                        <span class="error">{{ form_errors(registrationForm.email) }}</span>
+                                    </div>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-3">
                                         <h6 class="mb-0">Firstname</h6>
                                     </div>
                                     <div class="form-floating col-sm-9 text-secondary">
-                                        <input type="text" value="" name="email" class="form-control" id="floatingInput" required="" autofocus="" placeholder="Firstname">
-                                        <label style="margin-left: 8px" for="floatingInput">{{ user.firstname }}</label>
+                                        {{ form_widget(registrationForm.firstname, {'attr': {'placeholder': 'Firstname', 'class': 'form-control ml-3'}}) }}
+                                        <span class="error">{{ form_errors(registrationForm.firstname) }}</span>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -34,29 +56,60 @@
                                         <h6 class="mb-0">Lastname</h6>
                                     </div>
                                     <div class="form-floating col-sm-9 text-secondary">
-                                        <input type="text" value="" name="email" class="form-control ml-3" id="floatingInput" required="" autofocus="" placeholder="Lastname">
-                                        <label style="margin-left: 8px" for="floatingInput">{{ user.lastname }}</label>
+                                        {{ form_widget(registrationForm.lastname, {'attr': {'placeholder': 'Lastname', 'class': 'form-control ml-3'}}) }}
+                                        <span class="error">{{ form_errors(registrationForm.lastname) }}</span>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-sm-3">
-                                        <h6 class="mb-0">Password</h6>
+                                        <h6 class="mb-0">Edit Password</h6>
                                     </div>
                                     <div class="form-floating col-sm-9 text-secondary">
-                                        <input type="password" value="" name="email" class="form-control ml-3" id="floatingInput" required="" autofocus="" placeholder="Password">
-                                        <label style="margin-left: 8px" for="floatingInput">{{ user.password }}</label>
+                                        {{ form_widget(registrationForm.plainPassword, {'attr': {'value': ''}}) }}
+                                        <span class="error">{{ form_errors(registrationForm.plainPassword) }}</span>
+                                        <label style="margin-left: 8px" for="floatingInput">Password</label>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-sm-3"></div>
                                     <div class="col-sm-9 text-secondary">
-                                        <input type="button" class="btn btn-primary px-4" value="Save Changes">
+                                        <input type="submit" class="btn btn-primary px-4" value="Save Changes">
                                     </div>
                                 </div>
+                                {{ form_end(registrationForm) }}
+
                             {% endif %}
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                {% for product in user.products %}
+                    <div class="d-flex flex-wrap">
+                        <div class="card" style="width: 18rem; margin: 10px">
+                            <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description }}</p>
+                                <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
+                                    Voir le produit
+                                </a>
+                                <small class="text-muted">{{ product.price|number_format(2) }}€</small>
+                                <div>
+                                    {% for tag in product.tags %}
+                                        <span class="badge rounded-pill bg-dark">{{ tag.libelle }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="card-footer mt-3">
+                                    <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

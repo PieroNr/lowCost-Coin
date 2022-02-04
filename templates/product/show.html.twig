@@ -11,16 +11,7 @@
 
 
         <div class="card-body">
-            <div class="col js-vote">
-                {% if app.user and app.user.id != product.sellerId.id %}
-                    <form class="form-vote" action="{{ path('app_product_vote', { slug: product.slug }) }}" method="post">
-                        <button class="btn btn-success btn-sm js-vote" name="vote" value="up">&#128077;</button>
-                        <button class="btn btn-danger btn-sm js-vote" name="vote" value="down">&#128078;</button>
-                        <span class="badge rounded-pill bg-dark">{{ noteTotale }}</span>
 
-                    </form>
-                {% endif %}
-            </div>
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
             <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
@@ -47,6 +38,10 @@
             <button type="submit" class="btn btn-primary w-100">Envoyer</button>
             {{ form_end(form) }}
 
+        {% elseif app.user.id == product.sellerId.id %}
+            <a href="{{ path('app_product_edit', {'slug': product.slug}) }}" class="btn btn-primary">
+                Editer le produit
+            </a>
         {% endif %}
 
     </div>

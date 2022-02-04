@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Data\SearchData;
+use App\Entity\Image;
 use App\Entity\Note;
 use App\Entity\Product;
 use App\Entity\Question;
@@ -95,6 +96,58 @@ class ProductController extends AbstractController
     }
 
     /**
+     * @Route("/product/{slug}/edit", name="app_product_edit")
+     * @return Response
+     */
+    public function edit(Product $product, Request $request, EntityManagerInterface $entityManager, UserInterface $user): Response
+    {
+
+        $form = $this->createForm(CreateProductFormType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            foreach ($form->get('images')->getData() as $image){
+                $image->setProductId($product);
+            }
+
+            $entityManager->flush();
+
+            $this->AddFlash(
+                'succes',
+                "Le produit a bien été enregistré  !"
+            );
+
+
+            return $this->redirectToRoute('app_product_show', [
+                'slug' => $product->getSlug()
+            ]);
+        }
+
+        return $this->render('product/edit.html.twig', [
+            'createProductForm' => $form->createView(),
+            'product' => $product
+        ]);
+    }
+
+    /**
+     * @Route("/product/{slug}/edit/image/{id}/delete", name="app_product_edit_picture_delete")
+     */
+    public function deleteImage($id, EntityManagerInterface $entityManager)
+    {
+
+        $image = $entityManager->getReference(Image::class, $id);
+        $productSlug = $image->getProductId()->getSlug();
+        $entityManager->remove($image);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_product_edit', [
+            'slug' => $productSlug
+        ]);
+
+    }
+
+    /**
      * @Route("/product/{slug}", name="app_product_show")
      * @return Response
      */
@@ -116,9 +169,6 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
 
-
-
-
         if ($form->isSubmitted() && $form->isValid() && $user!=$seller) {
 
             $question->setProductId($product);
@@ -135,52 +185,11 @@ class ProductController extends AbstractController
             'images' => $images,
             'tags' => $tags,
             'questions' => $questions,
-            'noteTotale' => $seller->getTotalNote(),
             'form' => $form->createView()
         ]);
     }
 
-    /**
-     * @Route("/product/{slug}/vote", name="app_product_vote", methods={"POST"})
-     */
-    public function questionVote(Product $product, Request $request, EntityManagerInterface $entityManager, UserInterface $user, NoteRepository $noteRepository): RedirectResponse
-    {
 
-
-
-
-        if ($user){
-            $findNote = $noteRepository->findBy(['userSender' => $user, 'userReceiver' => $product->getSellerId()]);
-
-            $vote = $request->request->get('vote');
-            if (!empty($findNote)){
-                $note = $findNote[0];
-                if ($vote === "up") {
-                    $note->setNote(1);
-                } elseif ($vote === "down") {
-                    $note->setNote(0);;
-                }
-
-            } else {
-                $note = new Note();
-                if ($vote === "up") {
-                    $note = $user->sendUpNote($product->getSellerId());
-                } elseif ($vote === "down") {
-                    $note = $user->sendDownNote($product->getSellerId());;
-                }
-                $entityManager->persist($note);
-            }
-
-            $entityManager->flush();
-        } else {
-            return $this->redirectToRoute('app_login');
-        }
-
-
-        return $this->redirectToRoute('app_product_show', [
-            'slug' => $product->getSlug()
-        ]);
-    }
 
 
 

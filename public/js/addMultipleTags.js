@@ -1,4 +1,3 @@
-
 $('.add_item_link').click(function (e) {
     const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
 
