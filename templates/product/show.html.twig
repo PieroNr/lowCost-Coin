@@ -1,10 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProductController!{% endblock %}
+{% block title %}Voir : {{ product.name }}{% endblock %}
 
 {% block body %}
-    <li><a href="{{ path('app_homepage') }}" class="nav-link px-2 text-secondary">Home</a></li>
-    <div class="card" style="width: 20%;">
+
+    <div class="card mt-5" style="width: 20%; left: 25%!important; min-width: 50%!important;">
+        <div class="card-header">
+            <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
+        </div>
         {% for image in images %}
             <img src="{{ vich_uploader_asset(image, 'imageFile') }}">
         {% endfor %}
@@ -12,22 +15,21 @@
 
         <div class="card-body">
 
+            Vendeur : <a href="{{ path('app_profil', {'id': product.sellerId.id}) }}">{{ product.sellerId.firstname }} {{ product.sellerId.lastname }}</a>
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
-            <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
-                Voir le produit
+            <a href="" class="btn btn-primary">
+                Ajouter au panier
             </a>
             <small class="text-muted">{{ product.price|number_format(2) }}€</small>
             <div>
-            {% for tag in tags %}
-                <span class="badge rounded-pill bg-dark">{{ tag.libelle }}</span>
-            {% endfor %}
+                {% for tag in tags %}
+                    <span class="badge rounded-pill bg-dark">{{ tag.libelle }}</span>
+                {% endfor %}
             </div>
+
         </div>
-        <div class="card-footer">
-            <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
-        </div>
-        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id != product.sellerId.id %}
+        {% if app.user and app.user.id != product.sellerId.id %}
 
             {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
             <h5>Posez votre question</h5>
@@ -35,38 +37,47 @@
             {{ form_row(form.name) }}
             <p>Contenu</p>
             {{ form_row(form.question) }}
-            <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+            <button type="submit" class="btn btn-primary w-50 mb-4 mt-4 mx-auto">Envoyer</button>
             {{ form_end(form) }}
+
         {% endif %}
         {% if (is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == product.sellerId.id) or is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('app_product_edit', {'slug': product.slug}) }}" class="btn btn-primary w-50">
+            <a href="{{ path('app_product_edit', {'slug': product.slug}) }}" class="btn btn-primary w-30">
                 Editer le produit
             </a>
-            <a href="{{ path('app_product_delete', {'slug': product.slug}) }}" class="btn btn-danger w-50">
+            <a href="{{ path('app_product_delete', {'slug': product.slug}) }}" class="btn btn-danger w-30">
                 Supprimer le produit
             </a>
 
         {% endif %}
+        <hr>
+        <div class="container">
+            {% for question in questions %}
+                <h5>{{ question.name }}</h5>
+                <strong>{{ question.question }}</strong>
+                <small class="text-muted">posée le : {{ question.askedAt|date }}</small>
+                <div class="ms-3">
+                    {% if question.answers is not empty %}
+                        <h6 style="font-weight: lighter; font-style: italic; margin-top: 2%">Réponses</h6>
+                    {% else %}
+                        <h6 style="font-weight: lighter; font-style: italic; margin-top: 2%">Pas de réponse</h6>
+                    {% endif %}
+                    {% for answer in question.answers %}
+                        <p class="mb-0 mt-3">{{ answer.username }} : <b>{{ answer.content }}</b></p>
+                        <small class="text-muted">{{ answer.createdAt|date }}</small>
+                    {% endfor %}
 
-
-    </div>
-    <div class="container">
-        {% for question in questions %}
-        <h5>{{ question.name }}</h5>
-        <strong>{{ question.question }}</strong>
-        <small class="text-muted">posée le : {{ question.askedAt|date }}</small>
-        <h6>Réponses</h6>
-            {% for answer in question.answers %}
-                <p>{{ answer.username }} : <b>{{ answer.content }}</b></p>
-                <small class="text-muted">{{ answer.createdAt|date }}</small>
+                    {% if app.user.id == product.sellerId.id %}
+                        <form class="mt-2" action="{{ path('app_answer', { slug: question.slug }) }}" method="post" >
+                            <textarea name="answer" class="input-text" placeholder="Réponse" style="width: 100%"></textarea>
+                            <button class="btn btn-primary btn-sm" name="send">Répondre</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <hr>
             {% endfor %}
-            {% if app.user.id == product.sellerId.id %}
-                <form action="{{ path('app_answer', { slug: question.slug }) }}" method="post">
-                    <input type="text" name="answer" class="input-text" placeholder="Réponse">
-                    <button class="btn btn-primary btn-sm" name="send">Répondre</button>
-                </form>
-            {% endif %}
-        {% endfor %}
+        </div>
+
     </div>
 {% endblock %}
 {% block javascripts %}

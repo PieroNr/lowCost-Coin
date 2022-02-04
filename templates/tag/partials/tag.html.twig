@@ -1,0 +1,16 @@
+<li class="list-group-item d-flex justify-content-between align-items-center">
+    <form action="{{ path('app_tag_edit', {'id': tag.id}) }}" method="post">
+        <input type="text" name="libelle" class="input-text" placeholder="libelle" value="{{ tag.libelle }}">
+        <div>
+            <button class="btn btn-primary mt-2">
+                &#9998;
+            </button>
+
+        </div>
+    </form>
+    <a href="{{ path('app_tag_delete', {'id': tag.id}) }}" class="btn btn-danger">
+        ✕
+    </a>
+
+
+</li>

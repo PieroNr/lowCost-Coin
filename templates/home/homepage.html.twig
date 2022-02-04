@@ -1,26 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Home page
+    Home
 {% endblock %}
 
 {% block body %}
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <li><a href="{{ path('app_profil', { id: app.user.id }) }}">profil</a></li>
-        <li><a href="/logout">Logout</a></li>
-    {% else %}
-        <li><a href="/login">Login</a></li>
-    {% endif %}
 
-    <h1>Home</h1>
 
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href="{{ path('app_product_create') }}" class="btn btn-primary">
-            + Créer un produit
-        </a>
-    {% endif %}
-    <div class="container">
-        <div class="row">
+
+
+    <div class="container mt-4">
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a href="{{ path('app_product_create') }}" class="btn btn-primary mt-4">
+                + Créer un produit
+            </a>
+        {% endif %}
+        <div class="row mt-4">
             <div class="col-md-3">
                 {% include 'home/partials/filter.html.twig' with {form: form} only %}
             </div>

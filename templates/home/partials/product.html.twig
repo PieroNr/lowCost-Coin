@@ -1,20 +1,16 @@
-<div class="card" style="width: 20%;">
 
-    {% set imageProduct = product.images.first %}
-    {% set imagesProd = product.images.getValues %}
-    {% for image in product.images|slice(0,1) %}
-    <img class="card-img-top" src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="Card image cap">
-    {% endfor %}
-
-    <div class="card-body">
-        <h5 class="card-title">{{ product.name }}</h5>
-        <p class="card-text">{{ product.description }}</p>
-        <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
-            Voir le produit
-        </a>
+    <div class="d-flex flex-wrap">
+        <div class="card" style="width: 18rem; margin: 10px">
+            <img class="card-img-top" src="{{ vich_uploader_asset(product.images.first, 'imageFile') }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="btn btn-primary">
+                    Voir le produit
+                </a>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
+            </div>
+        </div>
     </div>
-    <div class="card-footer">
-        <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
-    </div>
-
-</div>

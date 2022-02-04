@@ -4,7 +4,7 @@
     <div class="card-body">
         <h5 class="card-title">{{ user.firstname }} {{ user.lastname }}</h5>
         <div><span class="badge rounded-pill bg-dark">{{ user.totalNote }} popularité</span></div>
-        <a href="{{ path('app_profil', {'id': user.id}) }}" class="btn btn-primary">
+        <a href="{{ path('app_profil', {'id': user.id}) }}" class="btn btn-primary mt-3">
             Profil
         </a>
     </div>

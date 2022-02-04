@@ -3,28 +3,50 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <div class="container center">
-        <h1>Inscription</h1>
-        {{ form_start(registrationForm, {'attr': {'class': 'row'}}) }}
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Adresse email'}}) }}
-            <span class="error">{{ form_errors(registrationForm.email) }}</span>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 col-xl-5 mx-auto">
+                <div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+                    <div class="card-img-left d-none d-md-flex">
+                    </div>
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
+                        {{ form_start(registrationForm, {'attr': {'class': 'column'}}) }}
+
+                        <div class="form-floating mb-3">
+                            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Adresse email', 'class': 'form-control'}}) }}
+                            <span class="error">{{ form_errors(registrationForm.email) }}</span>
+                            <label for="floatingInputEmail">Email address</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_widget(registrationForm.firstname, {'attr': {'placeholder': 'Prénom', 'class': 'form-control'}}) }}
+                            <span class="error">{{ form_errors(registrationForm.firstname) }}</span>
+                            <label for="floatingInputUsername">Firstname</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_widget(registrationForm.lastname, {'attr': {'placeholder': 'Nom', 'class': 'form-control'}}) }}
+                            <span class="error">{{ form_errors(registrationForm.lastname) }}</span>
+                            <label for="floatingInputUsername">Lastname</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Mot de passe', 'class': 'form-control'}}) }}
+                            <span class="error">{{ form_errors(registrationForm.plainPassword) }}</span>
+                            <label for="floatingPassword">Password</label>
+                        </div>
+
+                        <div class="input-field col s12 text-center">
+                            <input type="submit" name="" class="btn btn-primary" value="M'inscrire">
+                        </div>
+                        {{ form_end(registrationForm) }}
+
+                        <a class="d-block text-center mt-2 small" href="{{ path('app_login') }}">Have an account? Sign In</a>
+
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(registrationForm.firstname, {'attr': {'placeholder': 'Prénom'}}) }}
-            <span class="error">{{ form_errors(registrationForm.firstname) }}</span>
-        </div>
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(registrationForm.lastname, {'attr': {'placeholder': 'Nom'}}) }}
-            <span class="error">{{ form_errors(registrationForm.lastname) }}</span>
-        </div>
-        <div class="input-field col s12 m6 l6 offset-m3 offset-l3">
-            {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'Mot de passe'}}) }}
-            <span class="error">{{ form_errors(registrationForm.plainPassword) }}</span>
-        </div>
-        <div class="input-field col s12">
-            <input type="submit" name="" class="btn btn-primary" value="M'inscrire">
-        </div>
-        {{ form_end(registrationForm) }}
     </div>
 {% endblock %}
