@@ -38,14 +38,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     private $password;
 
-    #[ORM\OneToMany(mappedBy: 'sellerId', targetEntity: Product::class, orphanRemoval: true, fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'sellerId', targetEntity: Product::class, orphanRemoval: true, cascade: ['remove'], fetch: 'EAGER')]
     private $products;
 
-    #[ORM\OneToMany(mappedBy: 'userSender', targetEntity: Note::class, fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'userSender', targetEntity: Note::class, cascade: ['remove'], fetch: 'EAGER')]
     private $givenNotes;
 
-    #[ORM\OneToMany(mappedBy: 'userReceiver', targetEntity: Note::class, fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'userReceiver', targetEntity: Note::class, cascade: ['remove'], fetch: 'EAGER')]
     private $receivedNotes;
+
+    private $totalNote;
 
     public function __construct()
     {
@@ -246,8 +248,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $totalNote--;
             }
         }
-
-        return $totalNote;
+        $this->totalNote = $totalNote;
+        return $this->totalNote;
     }
 
     public function removeGivenNote(Note $givenNote): self

@@ -27,7 +27,7 @@
         <div class="card-footer">
             <small class="text-muted">Dernière mise à jour : {{ product.publishedAt|ago }}</small>
         </div>
-        {% if app.user and app.user.id != product.sellerId.id %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.id != product.sellerId.id %}
 
             {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
             <h5>Posez votre question</h5>
@@ -37,12 +37,17 @@
             {{ form_row(form.question) }}
             <button type="submit" class="btn btn-primary w-100">Envoyer</button>
             {{ form_end(form) }}
-
-        {% elseif app.user.id == product.sellerId.id %}
-            <a href="{{ path('app_product_edit', {'slug': product.slug}) }}" class="btn btn-primary">
+        {% endif %}
+        {% if (is_granted('IS_AUTHENTICATED_FULLY') and app.user.id == product.sellerId.id) or is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_product_edit', {'slug': product.slug}) }}" class="btn btn-primary w-50">
                 Editer le produit
             </a>
+            <a href="{{ path('app_product_delete', {'slug': product.slug}) }}" class="btn btn-danger w-50">
+                Supprimer le produit
+            </a>
+
         {% endif %}
+
 
     </div>
     <div class="container">

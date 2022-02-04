@@ -8,6 +8,7 @@ use App\Entity\Product;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\NoteRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,6 +20,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserController extends AbstractController
 {
+
+    /**
+     * @Route("/users", name="app_users")
+     */
+    public function index(UserRepository $userRepository): Response
+    {
+
+        /*$products = $repository->findAllProductOrderByDate();*/
+        $users = $userRepository->findAll();
+
+        return $this->render('user/index.html.twig', [
+            'users' => $users,
+
+        ]);
+    }
+
     /**
      * @Route("user/{id}", name="app_profil")
      */
@@ -47,10 +64,10 @@ class UserController extends AbstractController
         }
 
 
-        return $this->render('profil/profil.html.twig', [
+        return $this->render('user/profil.html.twig', [
             'user' => $user,
             'registrationForm' => $form->createView(),
-            'noteTotale' => $user->getTotalNote(),
+
         ]);
     }
 
@@ -59,6 +76,7 @@ class UserController extends AbstractController
      */
     public function userVote(User $user, Request $request, EntityManagerInterface $entityManager, UserInterface $userInterface, NoteRepository $noteRepository): RedirectResponse
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         if ($userInterface){
             $findNote = $noteRepository->findBy(['userSender' => $userInterface->getId(), 'userReceiver' => $user->getId()]);
@@ -91,5 +109,18 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_profil', [
             'id' => $user->getId()
         ]);
+    }
+
+    /**
+     * @Route("/user/{id}/delete", name="app_user_delete")
+     */
+    public function delete(User $user, Request $request, EntityManagerInterface $entityManager): Response
+    {
+
+        $userRef = $entityManager->getReference(User::class, $user->getId());
+        $entityManager->remove($userRef);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_homepage');
     }
 }

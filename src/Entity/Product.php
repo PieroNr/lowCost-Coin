@@ -54,14 +54,14 @@ class Product
     private $description;
 
 
-    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Image::class, cascade: ['persist', 'remove'], fetch: 'EAGER')]
     private $images;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products', cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'products', cascade: ['persist','remove'], fetch: 'EAGER')]
     #[ORM\JoinColumn(name: 'tag_product')]
     private $tags;
 
-    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Question::class, orphanRemoval: true, fetch: 'EAGER')]
+    #[ORM\OneToMany(mappedBy: 'productId', targetEntity: Question::class, orphanRemoval: true, cascade: ['remove'], fetch: 'EAGER')]
     private $questions;
 
     public function __construct()

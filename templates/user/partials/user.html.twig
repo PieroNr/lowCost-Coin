@@ -1,0 +1,15 @@
+<div class="card" style="width: 20%;">
+
+
+    <div class="card-body">
+        <h5 class="card-title">{{ user.firstname }} {{ user.lastname }}</h5>
+        <div><span class="badge rounded-pill bg-dark">{{ user.totalNote }} popularité</span></div>
+        <a href="{{ path('app_profil', {'id': user.id}) }}" class="btn btn-primary">
+            Profil
+        </a>
+    </div>
+    <div class="card-footer">
+        <small class="text-muted">{{ user.products|length }} produit(s)</small>
+    </div>
+
+</div>

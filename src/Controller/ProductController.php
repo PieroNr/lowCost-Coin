@@ -17,6 +17,7 @@ use App\Repository\QuestionRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use function Symfony\Bundle\FrameworkBundle\Controller\isGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,7 @@ class ProductController extends AbstractController
      */
     public function homepage(ProductRepository $repository, ImageRepository $imageRepository, Request $request){
 
+        /*$this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');*/
         $data = new SearchData();
         $data->page = $request->get('page', 1);
         $form = $this->createForm(SearchForm::class, $data);
@@ -58,9 +60,10 @@ class ProductController extends AbstractController
      * @Route("/product/new", name="app_product_create")
      * @return Response
      */
-    public function create(Request $request, EntityManagerInterface $entityManager, UserInterface $user): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
 
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $product = new Product();
         $form = $this->createForm(CreateProductFormType::class, $product);
@@ -68,7 +71,7 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $product->setSellerId($user);
+            $product->setSellerId($this->getUser());
 
             $entityManager->persist($product);
             foreach ($form->get('images')->getData() as $image){
@@ -94,13 +97,31 @@ class ProductController extends AbstractController
             'createProductForm' => $form->createView(),
         ]);
     }
+    /**
+     * @Route("/product/{slug}/delete", name="app_product_delete")
+     */
+    public function delete(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        ;
+        $productRef = $entityManager->getReference(Product::class, $product->getId());
+        $entityManager->remove($productRef);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_homepage');
+    }
 
     /**
      * @Route("/product/{slug}/edit", name="app_product_edit")
      * @return Response
      */
-    public function edit(Product $product, Request $request, EntityManagerInterface $entityManager, UserInterface $user): Response
+    public function edit(Product $product, Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if($product->getSellerId() !== $this->getUser()){
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
 
         $form = $this->createForm(CreateProductFormType::class, $product);
         $form->handleRequest($request);
@@ -135,8 +156,14 @@ class ProductController extends AbstractController
      */
     public function deleteImage($id, EntityManagerInterface $entityManager)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $image = $entityManager->getReference(Image::class, $id);
+
+        if($image->getProductId()->getSellerId() !== $this->getUser()){
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+
         $productSlug = $image->getProductId()->getSlug();
         $entityManager->remove($image);
         $entityManager->flush();
@@ -151,7 +178,7 @@ class ProductController extends AbstractController
      * @Route("/product/{slug}", name="app_product_show")
      * @return Response
      */
-    public function show(Product $product, ImageRepository $imageRepository, TagRepository $tagRepository, Request $request, UserInterface $user, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
+    public function show(Product $product, ImageRepository $imageRepository, TagRepository $tagRepository, Request $request, EntityManagerInterface $entityManager, QuestionRepository $questionRepository): Response
     {
 
         $seller = $product->getSellerId();
@@ -169,13 +196,17 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
 
-        if ($form->isSubmitted() && $form->isValid() && $user!=$seller) {
+        if ($form->isSubmitted() && $form->isValid() && $this->getUser()!=$seller) {
 
             $question->setProductId($product);
-            $question->setBuyerId($user);
+            $question->setBuyerId($this->getUser());
 
             $entityManager->persist($question);
             $entityManager->flush();
+
+            return $this->redirectToRoute('app_product_show',[
+                'slug' => $product->getSlug()
+            ]);
 
         }
 

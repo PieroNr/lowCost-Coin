@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Users page
+{% endblock %}
+
+{% block body %}
+
+    <h1>Users</h1>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-group">
+                    {% if users is not empty %}
+                        {% for user in users %}
+                            {% include 'user/partials/user.html.twig' with {user: user} only%}
+                        {% endfor %}
+                    {% else %}
+                        <h4>Aucun produit trouvé !</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/{{ asset('css/style.css') }}">
+{% endblock %}
